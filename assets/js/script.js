@@ -21,27 +21,35 @@ var scores = []; // score array init
 // create questions array
 var questions = [
     {
-        question : "What does HTML stand for?",
-        choiceA : "Correct",
-        choiceB : "Wrong",
-        choiceC : "Wrong",
-        choiceD : "Wrong",
+        question : "How do you create a function in JavaScript?",
+        choiceA : "function = myFunction",
+        choiceB : "Function()",
+        choiceC : "funtion myFunction",
+        choiceD : "myfunction()",
         correct : "A"
     },{
-        question : "What does CSS stand for?",
-        choiceA : "Wrong",
-        choiceB : "Correct",
-        choiceC : "Wrong",
-        choiceD : "Wrong",
-        correct : "B"
+        question : "How to write an IF statement in JavaScript?",
+        choiceA : "if i = 5",
+        choiceB : "if i==5 then",
+        choiceC : "if i = 5 then",
+        choiceD : "if (i==5)",
+        correct : "D"
     },{
-        question : "What does JS stand for?",
+        question : "How does a FOR loop start?",
 
-        choiceA : "Wrong",
-        choiceB : "Wrong",
-        choiceC : "Correct",
-        choiceD : "Wrong",
+        choiceA : "for i++ i = 0",
+        choiceB : "for 5 i++",
+        choiceC : "for (i = 0; i < 5; i++)",
+        choiceD : "for i i++ i = 5",
         correct : "C"
+    },{
+        question : "How can you add a comment in a JavaScript?",
+
+        choiceA : "/** this is a comment",
+        choiceB : "//this is a comment",
+        choiceC : "'this is a comment'",
+        choiceD : "<-- this is a comment-->",
+        correct : "B"
     }
 ];
 
@@ -91,7 +99,7 @@ function renderTimer(){
 function checkAnswer(answer){
     if( answer == questions[currentQuestion].correct){
         // answer is correct
-        quizTime+= 5;
+        quizTime+= 15;
         renderTimer(); //make sure to update timer frequently so theres no discrepancy
         // change result color to green
         answerIsCorrect();
@@ -99,7 +107,7 @@ function checkAnswer(answer){
         // answer is wrong
         // change result color to red
         answerIsWrong();
-        quizTime-= 10;
+        quizTime-= 15;
     }
     if(currentQuestion < lastQuestion){
         currentQuestion++;
