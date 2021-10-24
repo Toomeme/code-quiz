@@ -9,7 +9,7 @@ const choiceD = document.getElementById("D");
 const timer = document.getElementById("timer");
 const scoreDiv = document.getElementById("scoreContainer");
 const formEl = document.getElementById("name-form");
-const tasksToDoEl = document.getElementById("tasks-to-do");
+const highScoreEl = document.getElementById("high-scores");
 
 var scores = [];
 
@@ -80,7 +80,7 @@ function renderTimer(){
         }else{
             // end the quiz and show the score
             clearInterval(timeUpdate);
-            scoreRender();
+            gameOver();
         }
 }
 
@@ -104,7 +104,7 @@ function checkAnswer(answer){
     }else{
         // end the quiz and show the score
         clearInterval(timeUpdate);
-        scoreRender();
+        gameOver();
     }
 }
 
@@ -144,6 +144,9 @@ var nameHandler = function(event) {
   };
 
   var createScoreEl = function(scoreObj) {
+    formEl.style.display = "none";
+    scoreDiv.style.display = "none";
+    highScoreEl.style.display = "block";
     var listItemEl = document.createElement("li");
     listItemEl.className = "score-item";
   
@@ -153,21 +156,21 @@ var nameHandler = function(event) {
     listItemEl.appendChild(scoreInfoEl);
   
     // create task actions (buttons and select) for task
-    tasksToDoEl.appendChild(listItemEl);
+    highScoreEl.appendChild(listItemEl);
     scores.push(scoreObj);
     saveScores();
   };
   
 
 // score render
-function scoreRender(){
-    scoreDiv.style.display = "block";
+function gameOver(){
     quiz.style.display = "none";
-    
-    // calculate the amount of question percent answered by the user
+    scoreDiv.style.display = "block";
+    formEl.style.display = "block";
+    // score = time remaining
     const score = quizTime;
     renderTimer(); //make sure to update timer frequently so theres no discrepancy
     scoreDiv.innerHTML += "<p>"+ score +"</p>";
 }
-// Create a new task
+// name entry
 formEl.addEventListener("submit", nameHandler);
