@@ -10,6 +10,9 @@ const timer = document.getElementById("timer");
 const scoreDiv = document.getElementById("scoreContainer");
 const formEl = document.getElementById("name-form");
 const highScoreEl = document.getElementById("high-scores");
+const scoreButtonsEl = document.getElementById("container");
+const viewHighScore = document.getElementById("view-scores");
+var loaded = 0;
 
 var scores = [];
 
@@ -72,14 +75,15 @@ function startQuiz(){
 
 // timer render
 function renderTimer(){
-    if(quizTime >= 0){
+    if(quizTime > 0){
         
         timer.innerHTML = "Time:" + " " + quizTime;
         quizTime--;
-        
         }else{
             // end the quiz and show the score
             clearInterval(timeUpdate);
+            quizTime = 0;
+            timer.innerHTML = "Time:" + " " + quizTime;
             gameOver();
         }
 }
@@ -97,6 +101,7 @@ function checkAnswer(answer){
         // answer is wrong
         // change result color to red
         answerIsWrong();
+        quizTime-= 10;
     }
     if(currentQuestion < lastQuestion){
         currentQuestion++;
@@ -110,19 +115,20 @@ function checkAnswer(answer){
 
 // answer is correct
 function answerIsCorrect(){
-    document.getElementById('result').style.backgroundColor = "#0f0";
+    document.getElementById('result').innerHTML = "<p class='result'>" + "Correct" + "</p>";
 }
 
 // answer is Wrong
 function answerIsWrong(){
-    document.getElementById('result').style.backgroundColor = "#f00";
+    document.getElementById('result').innerHTML = "<p class='result'>" + "Wrong" + "</p>";
 }
 
-var saveScores = function() {
-    localStorage.setItem("scores", JSON.stringify(scores));
-  }
+
 
 var nameHandler = function(event) {
+    if (loaded<1){
+        loadScores();
+    }
     event.preventDefault();
     var nameInput = document.querySelector("input[name='name']").value;
   
@@ -132,15 +138,17 @@ var nameHandler = function(event) {
       return false;
     }
   
-    // reset form fields for next task to be entered
+    // reset form fields for next name to be entered
     document.querySelector("input[name='name']").value = "";
   
       var scoreObj = {
         name: nameInput,
         score: quizTime
-      }
-  
-      createScoreEl(scoreObj);
+    }
+    createScoreEl(scoreObj);
+    // create score actions
+    var scoreActionsEl = createScoreActions();
+    highScoreEl.appendChild(scoreActionsEl);
   };
 
   var createScoreEl = function(scoreObj) {
@@ -154,12 +162,90 @@ var nameHandler = function(event) {
     scoreInfoEl.className = "score-info";
     scoreInfoEl.innerHTML = "<h3 class='score-name'>" + scoreObj.name + "</h3><span class='score-amount'>" + scoreObj.score + "</span>";
     listItemEl.appendChild(scoreInfoEl);
-  
-    // create task actions (buttons and select) for task
     highScoreEl.appendChild(listItemEl);
     scores.push(scoreObj);
     saveScores();
   };
+
+  var createScoreActions = function() {
+    // create container to hold elements
+    var actionContainerEl = document.createElement("div");
+    actionContainerEl.className = "score-actions";
+  
+    // create back button
+    var backButtonEl = document.createElement("button");
+    backButtonEl.textContent = "Go Back";
+    backButtonEl.className = "btn back-btn";
+    actionContainerEl.appendChild(backButtonEl);
+    // create delete button
+    var deleteButtonEl = document.createElement("button");
+    deleteButtonEl.textContent = "Clear High Scores";
+    deleteButtonEl.className = "btn delete-btn";
+    actionContainerEl.appendChild(deleteButtonEl);
+
+    return actionContainerEl;
+  };
+
+var saveScores = function() {
+    localStorage.setItem("scores", JSON.stringify(scores));
+  }
+
+var loadScores = function() {
+    loaded ++;
+    var savedScores = localStorage.getItem("scores");
+
+    if (!savedScores) {
+      return false;
+    }
+    savedScores = JSON.parse(savedScores);
+  
+      // loop through savedTasks array
+    for (var i = 0; i < savedScores.length; i++) {
+      // pass each task object into the `createTaskEl()` function
+      createScoreEl(savedScores[i]);
+    }
+}
+
+  var clearScores = function(){
+    var scoreSelected = document.getElementsByClassName("score-item");
+    while(scoreSelected[0]) {
+        scoreSelected[0].remove();
+    }
+    localStorage.removeItem('scores');
+    scores = [];
+  }
+
+  var resetQuiz = function(){
+    location.reload();
+  }
+
+  var scoreButtonHandler = function(event) {
+    // get target element from event
+    var targetEl = event.target;
+  
+    if (targetEl.matches(".back-btn")) {
+      resetQuiz();
+    } else if (targetEl.matches(".delete-btn")) {
+      clearScores();
+    }
+  };
+
+//hs display
+
+function showScores(){
+    if (loaded<1){
+        loadScores();
+    }
+    var scoreActionsEl = createScoreActions();
+    highScoreEl.appendChild(scoreActionsEl);
+    clearInterval(timeUpdate);
+    timer.style.display = "none";
+    quiz.style.display = "none";
+    formEl.style.display = "none";
+    scoreDiv.style.display = "none";
+    start.style.display = "none";
+    highScoreEl.style.display = "block";
+}
   
 
 // score render
@@ -167,10 +253,19 @@ function gameOver(){
     quiz.style.display = "none";
     scoreDiv.style.display = "block";
     formEl.style.display = "block";
-    // score = time remaining
-    const score = quizTime;
     renderTimer(); //make sure to update timer frequently so theres no discrepancy
-    scoreDiv.innerHTML += "<p>"+ score +"</p>";
+    var scoreDisplayEl = document.createElement("p");
+    scoreDisplayEl.textContent = "Your score is" + " " + quizTime;
+    scoreDisplayEl.className = "score-display";
+    scoreDiv.appendChild(scoreDisplayEl);
+
 }
 // name entry
 formEl.addEventListener("submit", nameHandler);
+
+// for back and clear buttons
+scoreButtonsEl.addEventListener("click", scoreButtonHandler);
+
+// view high score
+viewHighScore.addEventListener("click", showScores);
+
