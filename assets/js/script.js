@@ -124,9 +124,6 @@ function answerIsWrong(){
 }
 
 var nameHandler = function(event) {
-    if (loaded<1){
-        loadScores();
-    }
     event.preventDefault();
     var nameInput = document.querySelector("input[name='name']").value;
   
@@ -138,6 +135,10 @@ var nameHandler = function(event) {
   
     // reset form fields for next name to be entered
     document.querySelector("input[name='name']").value = "";
+
+    if (loaded<1){
+        loadScores();
+    }
   
       var scoreObj = {
         name: nameInput,

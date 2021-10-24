@@ -134,7 +134,7 @@ body{
     padding : 5px;
 }
 
-#name-form{
-margin-top: 0px;
-position: relative;
+input{
+top:90%;
+position: absolute;
 }
