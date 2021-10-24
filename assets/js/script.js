@@ -1,5 +1,6 @@
 // select all elements
-const start = document.getElementById("start");
+const start = document.getElementById("start-div");
+const startButton = document.getElementById("start");
 const quiz = document.getElementById("quiz");
 const question = document.getElementById("question");
 const choiceA = document.getElementById("A");
@@ -12,9 +13,10 @@ const formEl = document.getElementById("name-form");
 const highScoreEl = document.getElementById("high-scores");
 const scoreButtonsEl = document.getElementById("container");
 const viewHighScore = document.getElementById("view-scores");
-var loaded = 0;
 
-var scores = [];
+var loaded = 0; // track whether scores were loaded
+var created = 0; //track whether action buttons are created
+var scores = []; // score array init
 
 // create questions array
 var questions = [
@@ -44,7 +46,6 @@ var questions = [
 ];
 
 // create variables
-
 const lastQuestion = questions.length - 1;
 var currentQuestion = 0;
 var quizTime = 60; // 30s
@@ -61,8 +62,6 @@ function renderQuestion(){
     choiceD.innerHTML = q.choiceD;
 }
 
-start.addEventListener("click",startQuiz);
-
 // start quiz button
 function startQuiz(){
     start.style.display = "none";
@@ -71,7 +70,6 @@ function startQuiz(){
     renderTimer();
     timeUpdate = setInterval(renderTimer,1000); // render Timer every second
 }
-
 
 // timer render
 function renderTimer(){
@@ -115,15 +113,15 @@ function checkAnswer(answer){
 
 // answer is correct
 function answerIsCorrect(){
-    document.getElementById('result').innerHTML = "<p class='result'>" + "Correct" + "</p>";
+    document.getElementById('result').style.display= "block";
+    document.getElementById('result').innerHTML = "<p class='result'>" + "Correct!" + "</p>";
 }
 
 // answer is Wrong
 function answerIsWrong(){
-    document.getElementById('result').innerHTML = "<p class='result'>" + "Wrong" + "</p>";
+    document.getElementById('result').style.display= "block";
+    document.getElementById('result').innerHTML = "<p class='result'>" + "Wrong!" + "</p>";
 }
-
-
 
 var nameHandler = function(event) {
     if (loaded<1){
@@ -134,7 +132,7 @@ var nameHandler = function(event) {
   
     // check if inputs are empty (validate)
     if (nameInput === "") {
-      alert("You need to fill out the form!");
+      alert("You need to enter your name!");
       return false;
     }
   
@@ -157,11 +155,7 @@ var nameHandler = function(event) {
     highScoreEl.style.display = "block";
     var listItemEl = document.createElement("li");
     listItemEl.className = "score-item";
-  
-    var scoreInfoEl = document.createElement("div");
-    scoreInfoEl.className = "score-info";
-    scoreInfoEl.innerHTML = "<h3 class='score-name'>" + scoreObj.name + "</h3><span class='score-amount'>" + scoreObj.score + "</span>";
-    listItemEl.appendChild(scoreInfoEl);
+    listItemEl.textContent = scoreObj.name + " - " + scoreObj.score;
     highScoreEl.appendChild(listItemEl);
     scores.push(scoreObj);
     saveScores();
@@ -173,12 +167,12 @@ var nameHandler = function(event) {
     actionContainerEl.className = "score-actions";
   
     // create back button
-    var backButtonEl = document.createElement("button");
+    var backButtonEl = document.createElement("div");
     backButtonEl.textContent = "Go Back";
     backButtonEl.className = "btn back-btn";
     actionContainerEl.appendChild(backButtonEl);
     // create delete button
-    var deleteButtonEl = document.createElement("button");
+    var deleteButtonEl = document.createElement("div");
     deleteButtonEl.textContent = "Clear High Scores";
     deleteButtonEl.className = "btn delete-btn";
     actionContainerEl.appendChild(deleteButtonEl);
@@ -230,14 +224,16 @@ var loadScores = function() {
     }
   };
 
-//hs display
+//High score display
 
 function showScores(){
     if (loaded<1){
         loadScores();
     }
+    if (created<1){
     var scoreActionsEl = createScoreActions();
     highScoreEl.appendChild(scoreActionsEl);
+    }
     clearInterval(timeUpdate);
     timer.style.display = "none";
     quiz.style.display = "none";
@@ -245,6 +241,7 @@ function showScores(){
     scoreDiv.style.display = "none";
     start.style.display = "none";
     highScoreEl.style.display = "block";
+    created ++;
 }
   
 
@@ -254,12 +251,20 @@ function gameOver(){
     scoreDiv.style.display = "block";
     formEl.style.display = "block";
     renderTimer(); //make sure to update timer frequently so theres no discrepancy
+    var gameOverEl = document.createElement("h1");
+    gameOverEl.textContent = "All Done!";
+    gameOverEl.className = "score-display";
+    scoreDiv.appendChild(gameOverEl);
     var scoreDisplayEl = document.createElement("p");
-    scoreDisplayEl.textContent = "Your score is" + " " + quizTime;
+    scoreDisplayEl.textContent = "Your final score is" + " " + quizTime;
     scoreDisplayEl.className = "score-display";
     scoreDiv.appendChild(scoreDisplayEl);
 
 }
+
+//start button
+startButton.addEventListener("click",startQuiz);
+
 // name entry
 formEl.addEventListener("submit", nameHandler);
 
@@ -268,4 +273,5 @@ scoreButtonsEl.addEventListener("click", scoreButtonHandler);
 
 // view high score
 viewHighScore.addEventListener("click", showScores);
+
 

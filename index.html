@@ -7,11 +7,20 @@
 </head>
 <body>
     <div id="container">
-        <div id="start">Start Quiz!</div>
+        <div id="start-div">
+            <h1>Coding Quiz Challenge</h1>
+                <p>
+                    Try to answer the following coding-related questions within the time limit.
+                    Keep in mind that incorrect answers will penalize your score/time by 10 seconds! 
+                </p>
+            <div id = "start" class="btn">Start Quiz!</div>
+        </div>
         
         
         <div id="timer"></div>
-        <button id="view-scores">view scores</button>
+        <div id="view-scores">
+            View high scores
+        </div>
         
         <div id="quiz" style="display: none">
             <div id="question"></div>
@@ -21,7 +30,7 @@
                     <li class="choice" id="C" onclick="checkAnswer('C')"></li>
                     <li class="choice" id="D" onclick="checkAnswer('D')"></li>
                 </ol>
-            <div id="result"></div>
+            <div id="result" style="display: none"></div>
         </div>
     <div id="scoreContainer" style="display: none">
     </div>
@@ -34,7 +43,8 @@
             <button class="btn" id="save-score" type="submit">Add Name</button>
           </div>
     </form>
-    <ul class="score-list" id="high-scores" style="display: none"></ul>
+    <ol class="score-list" id="high-scores" style="display: none"></ol>
+    <br/>
 </div>
 
 <script src="./assets/js/script.js"></script>
